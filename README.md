@@ -19,5 +19,5 @@ Key Features
    underserved regions.
 
 5) Churn Prediction (Machine Learning)
-   Apply supervised macine learning models to predict the likelihood of a customer
+   Apply supervised machine learning models to predict the likelihood of a customer
    placing future orders based on historical order behaviour 
