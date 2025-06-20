@@ -2,7 +2,8 @@
 Delivery Analysis &amp; Customer Retention Prediction
 
 This project focuses on analyzing weekly delivery data, identifying inactive customers (those who haven't ordered in the last 6 months),
-and developing predictive models to estimate the probability of a customer ordering again in the future.
+and developing predictive models to estimate the probability of a customer ordering again in the future. Due to sensitive data, the streets 
+and addresses used in excel file are fake.
 
 Key Features
 
