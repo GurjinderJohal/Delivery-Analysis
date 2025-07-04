@@ -20,7 +20,7 @@ Key Features
        underserved regions.
 
     4. Churn Prediction (Machine Learning)
-       Apply supervised machine learning models to predict the likelihood of a customer
+       Apply supervised machine learning model (Random Forest) to predict the likelihood of a customer
        placing future orders based on historical order behaviour 
 
 Motivation & Objectives
