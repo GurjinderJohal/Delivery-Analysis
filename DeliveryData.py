@@ -132,3 +132,82 @@ def mapInactiveCustomers():
         print("No locations to map.")
 
 
+# Convert time (e.g., 14:30:00) into seconds since midnight
+def time_to_seconds(t):
+    if pd.isnull(t):
+        return None
+    return t.hour * 3600 + t.minute * 60 + t.second
+
+#use supervised machine learning to find likelihood of customer reordering
+#use RandomForestModel
+def customerRetention():
+    df = pd.concat([df_2024,df_2025], ignore_index=True)
+    # Ensure 'date' column is datetime
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    df = df.dropna(subset=['Date'])
+
+    # Use April 1, 2025 as reference point
+    reference_date = pd.Timestamp('2025-04-01')
+    six_months_ago = reference_date - pd.DateOffset(months=6)
+
+    df['time_in_seconds'] = df['Time'].apply(time_to_seconds)
+
+    # Group by customer (address)
+    group = df.groupby('Address').agg({
+        'Date': ['min', 'max', 'count'],
+        'Amount': 'mean',
+        'Channel': lambda x: x.value_counts().to_dict(),
+        'time_in_seconds': 'mean'
+    })
+
+    # Flatten column names
+    group.columns = ['first_order', 'last_order', 'total_orders', 'avg_order_amount', 'order_channels', 'avg_order_time']
+    group.reset_index(inplace=True)
+
+    # Add days since last order
+    group['days_since_last_order'] = (reference_date - group['last_order']).dt.days
+
+    # Create churn label: 1 = churned (no order in last 6 months)       
+    group['churn'] = (group['last_order'] < six_months_ago).astype(int)
+
+    # Expand order channels into separate columns
+    channels_df = pd.json_normalize(group['order_channels'])
+    group = pd.concat([group, channels_df.fillna(0)], axis=1)
+
+    # Final features
+    features = ['total_orders', 'avg_order_amount', 'days_since_last_order', 'avg_order_time']
+    features += [col for col in ['POS', 'call Center', 'web', 'mobile'] if col in group.columns]
+
+    # Drop rows with missing data in selected features
+    X = group[features].fillna(0)
+    y = group['churn']
+
+    # Scale features
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    # Train/test split
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+    # Train Random Forest model
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
+
+    # Evaluate model
+    y_pred = model.predict(X_test)
+    y_prob = model.predict_proba(X_test)[:, 1]
+    print(classification_report(y_test, y_pred))
+    print("ROC AUC Score:", roc_auc_score(y_test, y_prob))
+
+    # Predict churn probability for all customers
+    group['churn_probability'] = model.predict_proba(X_scaled)[:, 1]
+    group['churn_prediction'] = (group['churn_probability'] >= 0.5).astype(int)
+
+    # Save to Excel
+    group[['Address', 'total_orders', 'avg_order_amount', 'days_since_last_order',
+        'churn_probability', 'churn_prediction']].to_excel('churn_model_output.xlsx', index=False)
+
+    #1 if they are likely to churn, 0 if not
+    print("Churn predictions saved to 'churn_model_output.xlsx'")
+
+
