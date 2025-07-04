@@ -3,6 +3,10 @@ from datetime import datetime, timedelta
 from geopy.geocoders import Nominatim
 import time
 import folium
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, roc_auc_score
+from sklearn.preprocessing import StandardScaler
 
 file_path = 'Data Deliveries.xlsx'
 df_2024 = pd.read_excel(file_path, sheet_name='2024')
