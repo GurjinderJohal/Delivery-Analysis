@@ -26,8 +26,8 @@ Key Features
 Motivation & Objectives
 
 Businesses face two challenges:
-	1.	Identify inactive customers early to enable targeted re-engagement campaigns.
-	2.	Predict future ordering behavior to inform marketing and retention strategy.
+    1.	Identify inactive customers early to enable targeted re-engagement campaigns.
+    2.	Predict future ordering behavior to inform marketing and retention strategy.
 
 This project offers a combined analytical approach to tackle both—backed with visualization and a predictive model.
 
