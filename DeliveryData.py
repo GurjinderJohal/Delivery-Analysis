@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from geopy.geocoders import Nominatim
 import time
 import folium
+from folium.plugins import HeatMap
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, roc_auc_score
@@ -12,9 +13,15 @@ file_path = 'Data Deliveries.xlsx'
 df_2024 = pd.read_excel(file_path, sheet_name='2024')
 df_2025 = pd.read_excel(file_path, sheet_name='2025')
 
-#get total deliveries by each week
-def getWeeklyDeliveries():
 
+def getWeeklyDeliveries():
+    ''' 
+        Get the weekly deliveries each week
+        
+        Params:
+            None
+        
+    '''
     df = pd.concat([df_2024,df_2025], ignore_index=True)
 
     df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
@@ -23,9 +30,13 @@ def getWeeklyDeliveries():
     weekly_counts = df.groupby('Week').size().reset_index(name='Total Deliveries')
     print(weekly_counts)
 
-#generate a heat map for deliveries for specified week ex. 2025-04-28
 def generateHeatMap(start_of_week):
+    '''
+        Generate Heat Map for deliveries for the specified week
 
+        Params:
+            start_of_week: First day of the week you want to generate the heat map. ex: 2025-04-28
+    '''
     df = df_2025
     df['Date'] = pd.to_datetime(df['Date'])
 
@@ -36,7 +47,6 @@ def generateHeatMap(start_of_week):
 
     addresses = list(df_week['Address'])
 
-    #get latitude and longitude of addresses
     locations = get_locations(addresses)
 
     df_locations = pd.DataFrame(locations)
@@ -54,11 +64,19 @@ def generateHeatMap(start_of_week):
     heat_data = df_week[['latitude','longitude']]
     HeatMap(heat_data).add_to(m)
 
-    m.save("delivery_heatmap_week.html")
+    m.save(f"delivery_heatmap_{start_of_week}.html")
     print("Heatmap saved")
 
-#get latitude and longitude for addresses
 def get_locations(addresses):
+    """
+        Get the latitude and longitude for the addresses
+
+        Params:
+            Addresses of customers
+
+        Returns:
+            List with the addresses, latitude, and longitude
+    """
     geolocator = Nominatim(user_agent="address_mapper")
     locations = []
     for address in addresses:
@@ -70,10 +88,12 @@ def get_locations(addresses):
             print(f"Error geocdoing {address}: {e}")
         time.sleep(2)
     return locations
-    
+
 #get inactive customers that have not ordered in the last 6 months
 def getInactiveCustomers():
-    
+    '''
+        Gets the inactive customers that have not ordered in the last 6 months
+    '''
     # Combine both DataFrames
     df = pd.concat([df_2024, df_2025], ignore_index=True)
     # Ensure 'date' column is datetime type
@@ -113,16 +133,17 @@ def getInactiveCustomers():
     #save the inactive customers to excel file
     inactive_customers.to_excel('inactive_customers.xlsx', index=False)
 
-#map the inactive customers to see a visual representation 
-def mapInactiveCustomers():
 
+def mapInactiveCustomers():
+    '''
+        Map the inactive customers to see a visual representation
+    '''
     getInactiveCustomers()
     inactive_customers = pd.read_excel('inactive_customers.xlsx')
     addresses = list(inactive_customers['Address'])
 
-    #grab latitude and longitude of addresses
     locations = get_locations(addresses)
-
+    
     if locations:
         avg_lat = sum(lat for _, lat, _ in locations) / len(locations)
         avg_lon = sum(lon for _,_, lon in locations) / len(locations)
@@ -136,15 +157,25 @@ def mapInactiveCustomers():
         print("No locations to map.")
 
 
-# Convert time (e.g., 14:30:00) into seconds since midnight
 def time_to_seconds(t):
+    '''
+        Convert time (ex, 14:30:00) into seconds since midnight
+
+        Params: 
+            The time 
+        
+        Returns:
+            the seconds since midnight
+    '''
     if pd.isnull(t):
         return None
     return t.hour * 3600 + t.minute * 60 + t.second
 
-#use supervised machine learning to find likelihood of customer reordering
-#use RandomForestModel
+
 def customerRetention():
+    '''
+        Uses supervised machine learning (Random Forest Model) to find the likelihood of customer reordering
+    '''
     df = pd.concat([df_2024,df_2025], ignore_index=True)
     # Ensure 'date' column is datetime
     df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
@@ -211,7 +242,4 @@ def customerRetention():
     group[['Address', 'total_orders', 'avg_order_amount', 'days_since_last_order',
         'churn_probability', 'churn_prediction']].to_excel('churn_model_output.xlsx', index=False)
 
-    #1 if they are likely to churn, 0 if not
     print("Churn predictions saved to 'churn_model_output.xlsx'")
-
-
