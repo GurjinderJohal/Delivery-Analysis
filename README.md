@@ -2,7 +2,7 @@
 Delivery Analysis &amp; Customer Retention Prediction
 
 This project focuses on analyzing weekly delivery data, identifying inactive customers (those who haven't ordered in the last 6 months), generating Heat Maps 
-with weekly deliverires to see if certain marketing strategies are working, and developing predictive model to estimate the probability of a customer ordering 
+with weekly deliveries to see if certain marketing strategies are working, and developing predictive model to estimate the probability of a customer ordering 
 again in the future. Due to sensitive data, the streets and addresses used in excel file are fake.
 
 Key Features
