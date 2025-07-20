@@ -13,7 +13,6 @@ file_path = 'Data Deliveries.xlsx'
 df_2024 = pd.read_excel(file_path, sheet_name='2024')
 df_2025 = pd.read_excel(file_path, sheet_name='2025')
 
-
 def getWeeklyDeliveries():
     ''' 
         Get the weekly deliveries each week
@@ -23,12 +22,39 @@ def getWeeklyDeliveries():
         
     '''
     df = pd.concat([df_2024,df_2025], ignore_index=True)
-
+    # Convert Date
     df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-    #start week from sunday instead of monday 
-    df['Week'] = df['Date'].dt.to_period('W-SAT')
-    weekly_counts = df.groupby('Week').size().reset_index(name='Total Deliveries')
-    print(weekly_counts)
+
+    # Extract year, week number, and start of week
+    df['Year'] = df['Date'].dt.year
+    df['Week_Num'] = df['Date'].dt.isocalendar().week
+    df['Week_Start'] = df['Date'] - pd.to_timedelta(df['Date'].dt.dayofweek, unit='d')  # Start on Sunday
+
+    # Extract month from Week_Start (ensures 1 value per week)
+    df['Month'] = df['Week_Start'].dt.strftime('%B')
+
+    # Count weekly deliveries
+    weekly_counts = df.groupby(['Year', 'Week_Num']).size().reset_index(name='Deliveries')
+
+    # Create a consistent `Week_Num -> Month` map using earliest week from any year
+    month_map = df.groupby('Week_Num')['Month'].first().reset_index()
+
+    # Pivot the delivery data
+    pivot = weekly_counts.pivot(index='Week_Num', columns='Year', values='Deliveries')
+    pivot.columns = [f'{col} Deliveries' for col in pivot.columns]
+    pivot = pivot.reset_index()
+
+    # Merge in Month label (no duplicates now)
+    pivot = pivot.merge(month_map, on='Week_Num', how='left')
+
+    # Reorder columns
+    cols = ['Week_Num', 'Month'] + [col for col in pivot.columns if 'Deliveries' in col]
+    pivot = pivot[cols]
+
+    # Fill missing weeks with 0
+    pivot = pivot.fillna(0).astype({col: 'int' for col in pivot.columns if 'Deliveries' in col})
+
+    display(pivot)
 
 def generateHeatMap(start_of_week):
     '''
