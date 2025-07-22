@@ -21,20 +21,20 @@ View the full interactive version of the delivery analysis notebook with Folium 
 
  Key Features
 
- Weekly Delivery Tracking
-Analyze delivery volume trends across 2024 and 2025 to identify seasonality, scheduling needs, and potential revenue gaps.
+ 1) Weekly Delivery Tracking
+	- Analyze delivery volume trends across 2024 and 2025 to identify seasonality, scheduling needs, and potential revenue gaps.
 
- Neighborhood Income Mapping
-Overlay average household income on city neighborhoods to evaluate the relationship between income and delivery volume.
+ 2) Neighborhood Income Mapping
+	- Overlay average household income on city neighborhoods to evaluate the relationship between income and delivery volume.
 
- Delivery Hotspot Analysis
-Generate heat maps of deliveries to evaluate the effectiveness of flyer campaigns and identify underserved areas.
+ 3) Delivery Hotspot Analysis
+	- Generate heat maps of deliveries to evaluate the effectiveness of flyer campaigns and identify underserved areas.
 
- Inactive Customer Identification
-Detect customers who haven’t ordered in the last 6 months and prepare targeted promotions based on historical spending.
+ 4) Inactive Customer Identification
+	- Detect customers who haven’t ordered in the last 6 months and prepare targeted promotions based on historical spending.
 
- Customer Churn Prediction
-Use a Random Forest model to predict which customers are likely to churn—complete with probability scores and performance metrics (e.g., ROC AUC, F1-score).
+ 5) Customer Churn Prediction
+	- Use a Random Forest model to predict which customers are likely to churn—complete with probability scores and performance metrics (e.g., ROC AUC, F1-score).
 
 ⸻
 
