@@ -43,6 +43,7 @@ Data Privacy
 All addresses and customer-specific information have been altered or anonymized to protect individual privacy. The analysis is performed on modified data strictly for educational and illustrative use.
 
  Use Case: Restaurant Growth Strategy
+ 
 	•	 Map customers by income to target premium households.
 	•	 Spot trends like reduced orders at the beginning of the month (e.g., due to rent cycles).
 	•	 Identify lost customers and re-engage them with personalized offers.
@@ -51,6 +52,7 @@ All addresses and customer-specific information have been altered or anonymized 
 ⸻
 
  Tech Stack
+ 
 	•	Python (pandas, scikit-learn, seaborn, folium, matplotlib)
 	•	Jupyter Notebooks
 	•	GeoJSON for mapping neighborhood boundaries
