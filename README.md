@@ -5,6 +5,9 @@ This project focuses on analyzing weekly delivery data, identifying inactive cus
 with weekly deliveries to see if certain marketing strategies are working, and developing predictive model to estimate the probability of a customer ordering 
 again in the future. Due to sensitive data, the streets and addresses used in excel file are fake.
 
+View Interactive Notebook:
+https://nbviewer.org/github/GurjinderJohal/Delivery-Analysis/blob/main/Delivery-Analysis.ipynb 
+
 Key Features
 
     1. Weekly Delivery Analysis
@@ -39,3 +42,4 @@ What You’ll Learn
 	•	Geospatial Visualization: Plot customer distribution using folium/geopandas.
 	•	ML Techniques: Train, evaluate, and tune classifier to predict customer reordering probability.
 	•	Export & Integration Readiness: Generate CSV output of inactive customers for downstream systems (like marketing automation tools).
+
